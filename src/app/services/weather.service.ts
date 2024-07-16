@@ -1,12 +1,21 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WeatherService {
+export class WeatherService {  
 
-  constructor() { }
+  API_URL = "http://localhost/web_app_weather/server/api"
 
+  constructor(private http: HttpClient) { }
+
+  searchByCity(inputdata: any) {
+    return this.http.post(`${this.API_URL}/search-city`, inputdata);
+  }
   
+  searchByLocation(inputdata: any) {
+    return this.http.post(`${this.API_URL}/search-location`, inputdata);
+  }
 
 }

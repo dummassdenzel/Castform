@@ -64,6 +64,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 echo json_encode($post->searchByCity($data));
                 break;
 
+            case 'search-location':
+                echo json_encode($post->searchByLocation($data));
+                break;
+
             default:
                 // Return a 403 response for unsupported requests
                 echo "No Such Request";

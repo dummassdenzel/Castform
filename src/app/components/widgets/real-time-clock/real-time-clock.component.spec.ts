@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WidgetsComponent } from './widgets.component';
+import { RealTimeClockComponent } from './real-time-clock.component';
 
-describe('WidgetsComponent', () => {
-  let component: WidgetsComponent;
-  let fixture: ComponentFixture<WidgetsComponent>;
+describe('RealTimeClockComponent', () => {
+  let component: RealTimeClockComponent;
+  let fixture: ComponentFixture<RealTimeClockComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WidgetsComponent]
+      imports: [RealTimeClockComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(WidgetsComponent);
+    fixture = TestBed.createComponent(RealTimeClockComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

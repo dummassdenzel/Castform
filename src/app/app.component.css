@@ -1,0 +1,33 @@
+/* app.component.css */
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrollbars */
+  }
+  
+  :host {
+    display: block;
+    height: 100vh; /* Full viewport height */
+    width: 100%;
+    background-image: url('../assets/c1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .background-container {
+    color: white;
+    text-shadow: 1px 1px 1px black;
+  }
+  
+
+  .weather-container {
+    background-color: rgba(255, 255, 255, 0.5); /* White background with 50% opacity */    
+  }
+
+  .rain-container {
+    background-color: rgba(255, 255, 255, 0.5); /* White background with 50% opacity */    
+  }
+  

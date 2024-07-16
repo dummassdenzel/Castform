@@ -1,0 +1,13 @@
+<div>
+
+<!-- DATE TODAY -->
+    <h1 class="date-container font-primary text-center">
+    {{ dateToday$ | async }}
+  </h1>
+  <!-- TIME -->
+  <h1 class="clock-container font-primary text-center">
+    {{ time$ | async | date: 'hh:mm:ss a' }}
+  </h1>
+
+
+</div>
