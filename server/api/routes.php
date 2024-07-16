@@ -10,7 +10,6 @@ require_once "./modules/post.php";
 require_once "./modules/delete.php";
 require_once "./config/database.php";
 require_once __DIR__ . '/bootstrap.php';
-require_once "./src/Jwt.php";
 
 // Initialize Get and Post objects
 $con = new Connection();
@@ -48,7 +47,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 }
                 break;
 
-
             default:
                 echo "This is forbidden";
                 http_response_code(403);
@@ -62,9 +60,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $data = json_decode(file_get_contents("php://input"));
         switch ($request[0]) {
 
-            case 'emailcheck':
-                // Return JSON-encoded data for adding users
-                echo json_encode($post->doesEmailExist($data->email));
+            case 'search-city':
+                echo json_encode($post->searchByCity($data));
                 break;
 
             default:
