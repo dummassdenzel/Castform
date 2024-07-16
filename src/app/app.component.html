@@ -46,14 +46,34 @@
     <div class="relative weather-container rounded-lg p-6 shadow-lg border-gray-100 border">      
       <div *ngIf="!loading; else loadingDisplay" class="px-5">
 
-        <button class="absolute top-3 right-3">
+        <button [matMenuTriggerFor]="settings" matTooltip="Settings" class="absolute top-2 right-3">
           <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-width="4" d="M6 12h.01m6 0h.01m5.99 0h.01"/>
-          </svg>
-          
-          
+          </svg>        
         </button>
-
+            <mat-menu #settings="matMenu">
+              <h1 class="font-primary font-bold text-center">
+                Temperature:
+              </h1>
+              <div class="flex-col justify-center">
+                <li class="border-y">
+                  <button (click)="changeMetricSystem('&units=standard')" class="hover:bg-blue-900 hover:shadow-lg hover:text-white py-2 px-3 mx-2 rounded-lg">
+                  Measure by Kelvin
+                </button>
+                </li>
+                <li class="border-b">
+                  <button (click)="changeMetricSystem('&units=imperial')" class="hover:bg-blue-900 hover:shadow-lg hover:text-white py-2 px-3 mx-2 rounded-lg">
+                  Measure by Fahrenheit
+                </button>
+                </li>
+                <li class="border-b">
+                  <button (click)="changeMetricSystem('&units=metric')" class="hover:bg-blue-900 hover:shadow-lg hover:text-white py-2 px-3 mx-2 rounded-lg">
+                  Measure by Celsius
+                </button>
+                </li>
+                
+              </div>
+            </mat-menu>
 
         <!-- CITY NAME -->
         <div class="text-center justify-center">
@@ -73,9 +93,9 @@
         <div class="text-center inline-flex gap-8 mb-10 justify-center">
 
           <!-- TEMP -->
-          <div matTooltip="{{weatherData.main.temp_min}}°C to {{weatherData.main.temp_max}}°C" class="my-auto">
-            <h1 class="font-primary font-bold text-6xl px-3">{{weatherData.main.temp}}°C</h1>
-            <p class="my-auto text-center  text-sm font-primary">Temperature </p>
+          <div matTooltip="{{weatherData.main.temp_min}}°{{getMetricSymbol(metricSystem)}} to {{weatherData.main.temp_max}}°{{getMetricSymbol(metricSystem)}}" class="my-auto">
+            <h1 class="font-primary font-bold text-6xl px-3">{{weatherData.main.temp}}°{{getMetricSymbol(metricSystem)}}</h1>
+            <p class="my-auto text-center  text-sm font-primary">Temperature</p>
             <!-- <p class="my-auto text-center text-xs font-primary">{{weatherData.main.temp_min}}°C - {{weatherData.main.temp_max}}°C</p> -->
           </div>         
 

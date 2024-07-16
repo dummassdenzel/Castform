@@ -15,14 +15,18 @@ class Post extends GlobalMethods
 
     public function searchByCity($data)
     {
+        $validMetricSystems = ['&units=standard', '&units=metric', '&units=imperial'];
+        if (!in_array($data->metricSystem, $validMetricSystems)) {
+            return $this->sendPayload(null, "failed", "Invalid metric system..", 400);
+        }
         if (!isset($data->city) || empty($data->city)) {
             return $this->sendPayload(null, "failed", "Please enter a City.", 400);
         }
 
         $city = $data->city;
+        $metricSystem = $data->metricSystem;
         $api_key = $this->openWeatherKey;
-        $api = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api_key&units=metric";
-
+        $api = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api_key&$metricSystem";
 
 
         // Initialize cURL session
@@ -71,14 +75,19 @@ class Post extends GlobalMethods
 
     public function searchByLocation($data)
     {
+        $validMetricSystems = ['&units=standard', '&units=metric', '&units=imperial'];
+        if (!in_array($data->metricSystem, $validMetricSystems)) {
+            return $this->sendPayload(null, "failed", "Invalid metric system..", 400);
+        }
         if (!isset($data->lat) || !isset($data->lon)) {
             return $this->sendPayload(null, "failed", "Please enter a Location.", 400);
         }
 
         $lat = $data->lat;
         $lon = $data->lon;
+        $metricSystem = $data->metricSystem;
         $api_key = $this->openWeatherKey;
-        $api = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$api_key&units=metric";
+        $api = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$api_key&$metricSystem";
 
         $result = file_get_contents($api);
 
