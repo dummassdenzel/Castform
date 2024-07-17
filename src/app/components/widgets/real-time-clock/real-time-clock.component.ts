@@ -10,7 +10,7 @@ import { Observable, map, shareReplay, timer } from 'rxjs';
   styleUrl: './real-time-clock.component.css'
 })
 export class RealTimeClockComponent {
-
+  
   public time$: Observable<Date>;
   public dateToday$: Observable<string>;
 

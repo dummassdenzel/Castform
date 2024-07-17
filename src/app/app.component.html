@@ -1,11 +1,10 @@
 
 <div class="p-5 relative background-container">
 
-  <div *ngIf="!loading; else loadingDisplay" class="absolute top-0 left-0 p-3 text-xs font-primary">
-      <!-- <p >Lat.: {{weatherData.coord.lat}}</p>
-      <p >Lon.: {{weatherData.coord.lon}}</p> -->
-      <app-real-time-clock></app-real-time-clock>
-  </div>
+  <!-- <div *ngIf="!loading; else loadingDisplay" class="absolute top-0 left-0 p-3 text-xs font-primary">
+      <p >Lat.: {{weatherData.coord.lat}}</p>
+      <p >Lon.: {{weatherData.coord.lon}}</p>      
+  </div> -->
 
   <div class="flex-col mt-8 mb-6 flex justify-center">
     <h1 class="font-primary font-bold text-5xl text-center">Castform</h1>
@@ -13,7 +12,7 @@
   </div>
   
 
-  <div class="flex justify-center mb-9">
+  <div class="flex justify-center mb-7">
     <form [formGroup]="searchForm">    
       <div class="flex items-center mb-3">
         <div class="form-outline flex-grow">
@@ -28,11 +27,6 @@
               <button (click)="searchByCity()"
                 class="bg-blue-900 border text-nowrap border-blue-900 font-primary rounded-e-md text-white px-3 py-2  hover:bg-blue-800 "
                 type="submit">
-                <!-- <svg class="w-6 h-6 inline text-gray-800 dark:text-white" aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
-                  <path
-                    d="M5.05 3C3.291 3 2.352 5.024 3.51 6.317l5.422 6.059v4.874c0 .472.227.917.613 1.2l3.069 2.25c1.01.742 2.454.036 2.454-1.2v-7.124l5.422-6.059C21.647 5.024 20.708 3 18.95 3H5.05Z" />
-                </svg> -->
                 Search City
               </button>              
             </div>
@@ -46,115 +40,119 @@
     <div class="relative weather-container rounded-lg p-6 shadow-lg border-gray-100 border">      
       <div *ngIf="!loading; else loadingDisplay" class="px-5">
 
-        <button [matMenuTriggerFor]="settings" matTooltip="Settings" class="absolute top-2 right-3">
-          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-width="4" d="M6 12h.01m6 0h.01m5.99 0h.01"/>
-          </svg>        
-        </button>
-            <mat-menu #settings="matMenu">
-              <h1 class="font-primary font-bold text-center">
-                Temperature:
-              </h1>
-              <div class="flex-col justify-center">
-                <li class="border-y">
-                  <button (click)="changeMetricSystem('&units=standard')" class="hover:bg-blue-900 hover:shadow-lg hover:text-white py-2 px-3 mx-2 rounded-lg">
-                  Measure by Kelvin
-                </button>
-                </li>
-                <li class="border-b">
-                  <button (click)="changeMetricSystem('&units=imperial')" class="hover:bg-blue-900 hover:shadow-lg hover:text-white py-2 px-3 mx-2 rounded-lg">
-                  Measure by Fahrenheit
-                </button>
-                </li>
-                <li class="border-b">
-                  <button (click)="changeMetricSystem('&units=metric')" class="hover:bg-blue-900 hover:shadow-lg hover:text-white py-2 px-3 mx-2 rounded-lg">
-                  Measure by Celsius
-                </button>
-                </li>
-                
-              </div>
-            </mat-menu>
-
-        <!-- CITY NAME -->
-        <div class="text-center justify-center">
+        
+          <button [matMenuTriggerFor]="settings" matTooltip="Settings" class="absolute top-2 right-3">
+            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-width="4" d="M6 12h.01m6 0h.01m5.99 0h.01"/>
+            </svg>        
+          </button>
+              <mat-menu #settings="matMenu">
+                <h1 class="font-primary font-bold text-center">
+                  Temperature:
+                </h1>
+                <div class="flex-col justify-center">
+                  <li class="border-y">
+                    <button (click)="changeMetricSystem('&units=standard')" class="hover:bg-blue-900 hover:shadow-lg hover:text-white py-2 px-3 mx-2 rounded-lg">
+                    Measure by Kelvin
+                  </button>
+                  </li>
+                  <li class="border-b">
+                    <button (click)="changeMetricSystem('&units=imperial')" class="hover:bg-blue-900 hover:shadow-lg hover:text-white py-2 px-3 mx-2 rounded-lg">
+                    Measure by Fahrenheit
+                  </button>
+                  </li>
+                  <li class="border-b">
+                    <button (click)="changeMetricSystem('&units=metric')" class="hover:bg-blue-900 hover:shadow-lg hover:text-white py-2 px-3 mx-2 rounded-lg">
+                    Measure by Celsius
+                  </button>
+                  </li>
+                  
+                </div>
+              </mat-menu>
+  
+          <!-- CITY NAME -->
+          <div class="text-center justify-center">          
+            <h1 class="text-center font-semibold font-primary text-4xl">
+              <svg class="w-7 h-7 inline -mt-1.5 -mr-1 text-blue-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path fill-rule="evenodd" d="M11.906 1.994a8.002 8.002 0 0 1 8.09 8.421 7.996 7.996 0 0 1-1.297 3.957.996.996 0 0 1-.133.204l-.108.129c-.178.243-.37.477-.573.699l-5.112 6.224a1 1 0 0 1-1.545 0L5.982 15.26l-.002-.002a18.146 18.146 0 0 1-.309-.38l-.133-.163a.999.999 0 0 1-.13-.202 7.995 7.995 0 0 1 6.498-12.518ZM15 9.997a3 3 0 1 1-5.999 0 3 3 0 0 1 5.999 0Z" clip-rule="evenodd"/>
+              </svg>            
+              {{weatherData.name}}
+            </h1>
+                <p class="text-sm">{{weatherData.sys.country}}</p>
+            
+          </div>
           
-          <h1 class="text-center font-semibold font-primary text-4xl">
-            <svg class="w-7 h-7 inline -mt-1.5 -mr-1 text-blue-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path fill-rule="evenodd" d="M11.906 1.994a8.002 8.002 0 0 1 8.09 8.421 7.996 7.996 0 0 1-1.297 3.957.996.996 0 0 1-.133.204l-.108.129c-.178.243-.37.477-.573.699l-5.112 6.224a1 1 0 0 1-1.545 0L5.982 15.26l-.002-.002a18.146 18.146 0 0 1-.309-.38l-.133-.163a.999.999 0 0 1-.13-.202 7.995 7.995 0 0 1 6.498-12.518ZM15 9.997a3 3 0 1 1-5.999 0 3 3 0 0 1 5.999 0Z" clip-rule="evenodd"/>
-            </svg>            
-            {{weatherData.name}}
-          </h1>
-          <p class="text-sm">{{weatherData.sys.country}}</p>
-        </div>
-        <div class="border-b mt-3 mb-4 border-gray-100"></div>      
-      
+          <div class="border-b mt-3 mb-4 border-gray-100"></div>      
+        
+          <div class="flex gap-10">
+  
+          
 
-        <!-- TEMP & WEATHER CONTAINER-->
-        <div class="text-center inline-flex gap-8 mb-10 justify-center">
-
-          <!-- TEMP -->
-          <div matTooltip="{{weatherData.main.temp_min}}°{{getMetricSymbol(metricSystem)}} to {{weatherData.main.temp_max}}°{{getMetricSymbol(metricSystem)}}" class="my-auto">
-            <h1 class="font-primary font-bold text-6xl px-3">{{weatherData.main.temp}}°{{getMetricSymbol(metricSystem)}}</h1>
-            <p class="my-auto text-center  text-sm font-primary">Temperature</p>
-            <!-- <p class="my-auto text-center text-xs font-primary">{{weatherData.main.temp_min}}°C - {{weatherData.main.temp_max}}°C</p> -->
-          </div>         
-
-          <div class="flex justify-center rounded-lg pl-8 pr-5 bg-blue-900 pb-2">
-            <!-- WEATHER -->
-            <div class="my-auto">
-              <div class="inline-flex">
-                <h1 class="my-auto font-primary font-bold text-3xl">{{weatherData.weather[0].main}}</h1>            
-                <img class="h-14 -ml-1 -my-auto" [src]="'https://openweathermap.org/img/wn/' + weatherData.weather[0].icon + '@2x.png'" alt="Weather Icon">
+            <div>
+      <!-- TEMP & WEATHER CONTAINER-->
+      <div class="text-center inline-flex gap-8 mb-10 justify-center">
+        
+        <!-- TEMP -->
+        <div matTooltip="{{weatherData.main.temp_min}}°{{getMetricSymbol(metricSystem)}} to {{weatherData.main.temp_max}}°{{getMetricSymbol(metricSystem)}}" class="my-auto">
+          <h1 class="font-primary font-bold text-6xl px-3">{{weatherData.main.temp}}°{{getMetricSymbol(metricSystem)}}</h1>
+              <p class="my-auto text-center  text-sm font-primary">Temperature</p>
+              <!-- <p class="my-auto text-center text-xs font-primary">{{weatherData.main.temp_min}}°C - {{weatherData.main.temp_max}}°C</p> -->
+            </div>         
+  
+            <div class="flex justify-center rounded-lg pl-8 pr-5 bg-blue-900 pb-2">
+              <!-- WEATHER -->
+              <div class="my-auto">
+                <div class="inline-flex">
+                  <h1 class="my-auto font-primary font-bold text-3xl">{{weatherData.weather[0].main}}</h1>            
+                  <img class="h-14 -ml-1 -my-auto" [src]="'https://openweathermap.org/img/wn/' + weatherData.weather[0].icon + '@2x.png'" alt="Weather Icon">
+                </div>
+                <p class="text-center -mt-3 -ml-4 text-sm font-primary">{{weatherData.weather[0].description}}</p>
               </div>
-              <p class="text-center -mt-3 -ml-4 text-sm font-primary">{{weatherData.weather[0].description}}</p>
+    
+              <!-- HUMIDITY -->
+              <div *ngIf="weatherData.rain" class="my-auto text-center pt-2">
+                <div class="inline-flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide text-blue-900 inline mt-2 lucide-droplet"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>       
+                  <h1 class="my-auto font-primary font-bold text-3xl">{{ weatherData.rain?.['1h'] || 0 }}mm</h1>    
+                </div>
+                <p class="text-center text-sm font-primary">Amount of rain for the past hour</p>
+              </div>
+  
             </div>
   
-            <!-- HUMIDITY -->
-            <div *ngIf="weatherData.rain" class="my-auto text-center pt-2">
-              <div class="inline-flex">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide text-blue-900 inline mt-2 lucide-droplet"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>       
-                <h1 class="my-auto font-primary font-bold text-3xl">{{ weatherData.rain?.['1h'] || 0 }}mm</h1>    
-              </div>
-              <p class="text-center text-sm font-primary">Amount of rain for the past hour</p>
+          </div>  
+          
+  
+          <!-- WIND CONTAINER-->
+          <div class="flex gap-10 justify-center">
+  
+            <!-- WIND SPEED -->
+            <div class="my-auto">
+              <h1 class="font-primary text-center font-bold text-2xl">{{weatherData.wind.speed}}m/s</h1>
+              <p class="my-auto text-center text-sm font-primary">Wind Speed</p>
+            </div> 
+  
+            <!-- WIND DIRECTION -->
+            <div class="my-auto">
+              <h1 class="font-primary text-center font-bold text-2xl">{{weatherData.wind.deg}}° - {{getWindDirection(weatherData.wind.deg)}}</h1>
+              <p class="my-auto text-center text-sm font-primary">Wind Direction</p>
+            </div> 
+            
+            <div class="my-auto">
+              <h1 class="font-primary text-center font-bold text-2xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide text-blue-500 inline -mt-1 -mr-1 lucide-droplet"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>       
+                {{weatherData.main.humidity}}%</h1>
+              <p class="my-auto text-center text-sm font-primary">Humidity</p>
             </div>
-
-          </div>
-
-        </div>  
-        
-
-        <!-- WIND CONTAINER-->
-        <div class="flex gap-10 justify-center">
-
-          <!-- WIND SPEED -->
-          <div class="my-auto">
-            <h1 class="font-primary text-center font-bold text-2xl">{{weatherData.wind.speed}}m/s</h1>
-            <p class="my-auto text-center text-sm font-primary">Wind Speed</p>
-          </div> 
-
-          <!-- WIND DIRECTION -->
-          <div class="my-auto">
-            <h1 class="font-primary text-center font-bold text-2xl">{{weatherData.wind.deg}}° - {{getWindDirection(weatherData.wind.deg)}}</h1>
-            <p class="my-auto text-center text-sm font-primary">Wind Direction</p>
-          </div> 
-          
-          <div class="my-auto">
-            <h1 class="font-primary text-center font-bold text-2xl">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide text-blue-500 inline -mt-1 -mr-1 lucide-droplet"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>       
-              {{weatherData.main.humidity}}%</h1>
-            <p class="my-auto text-center text-sm font-primary">Humidity</p>
-          </div>
-          
-          <div class="my-auto">
-            <h1 class="font-primary text-center font-bold text-2xl">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide inline -mt-1 -mr-1 lucide-cloud"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-              {{weatherData.clouds.all}}%</h1>
-            <p class="my-auto text-center text-sm font-primary">Clouds</p>
-          </div> 
-
-        </div>
-
-        
+            
+            <div class="my-auto">
+              <h1 class="font-primary text-center font-bold text-2xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide inline -mt-1 -mr-1 lucide-cloud"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                {{weatherData.clouds.all}}%</h1>
+              <p class="my-auto text-center text-sm font-primary">Clouds</p>
+            </div>   
+          </div>  
+            </div>
 
       </div>
       

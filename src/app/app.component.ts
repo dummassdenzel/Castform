@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { WeatherService } from './services/weather.service';
-import { Subscription } from 'rxjs';
+import { Observable, Observer, Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -22,6 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
   searchForm: any;
   private subscriptions = new Subscription();
   weatherData: any;
+  forecastData: any;
   loading: boolean = false;
   metricSystem: string = '&units=metric'; // My default metric system.
 
@@ -53,7 +54,9 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     this.subscriptions.add(
       this.weather.searchByCity(this.searchForm.value).subscribe((res:any)=>{
-        this.weatherData = res.payload;
+        this.weatherData = res.payload.weather;
+        this.forecastData = res.payload.forecast;
+        console.log(this.forecastData)
       }, error =>{
         switch (error.status){
           case 404:
@@ -86,6 +89,7 @@ export class AppComponent implements OnInit, OnDestroy {
       })
     )
   }
+
   
   searchByLocation(){
     this.loading = true;
