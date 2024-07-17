@@ -24,21 +24,90 @@ export class AppComponent implements OnInit, OnDestroy {
   weatherData: any;
   forecastData: any;
   loading: boolean = false;
-  metricSystem: string = '&units=metric'; // My default metric system.
+  metricSystem: any = '&units=metric'; // My default metric system.
+  userLocation:any;
+  showAdvanced:boolean = false;
 
   constructor(private builder: FormBuilder, private weather: WeatherService){  
+    const metricSystem:any = localStorage.getItem('metricSystem');
+    if(metricSystem && metricSystem !== 'null'){
+      this.metricSystem = metricSystem;
+    }
+
+    const showAdvancedString:any = localStorage.getItem('showAdvanced');
+    if(showAdvancedString){
+      this.showAdvanced = JSON.parse(showAdvancedString);
+    }
+
+    const userLocationString:any = localStorage.getItem('userLocation');
+    if(userLocationString){
+      this.userLocation = JSON.parse(userLocationString);
+    }
+
+
     this.searchForm = builder.group({
       city: ['', Validators.required],
       metricSystem: [this.metricSystem]
     })
+    
   }
 
-  ngOnInit(): void {
-    this.searchByLocation();
+  ngOnInit(): void {   
+    if(this.userLocation){
+      this.searchByLocation(this.userLocation.lat, this.userLocation.lon);
+    }
+    else{
+      this.searchByLocation();
+    }    
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+    
+
+  searchByLocation(lat: any = null, lon: any = null) {
+    this.loading = true;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        let userLocation;
+        if (lat && lon) {
+          userLocation = {
+            lat: lat,
+            lon: lon,
+            metricSystem: this.metricSystem
+          };
+        } else {
+          userLocation = {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+            metricSystem: this.metricSystem
+          };
+        }
+        this.subscriptions.add(
+          this.weather.searchByLocation(userLocation).subscribe(
+            (res: any) => {
+              this.weatherData = res.payload;
+              console.log(this.weatherData)
+              this.loading = false;
+            },
+            (error) => {
+              console.error('Error fetching weather:', error);
+              this.loading = false;
+            }
+          )
+        );
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        this.loading = false;
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 30000,
+        maximumAge: 0
+      }
+    );
   }
   
   searchByCity(){
@@ -54,9 +123,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     this.subscriptions.add(
       this.weather.searchByCity(this.searchForm.value).subscribe((res:any)=>{
-        this.weatherData = res.payload.weather;
-        this.forecastData = res.payload.forecast;
-        console.log(this.forecastData)
+        this.weatherData = res.payload;
       }, error =>{
         switch (error.status){
           case 404:
@@ -91,27 +158,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   
-  searchByLocation(){
-    this.loading = true;
-    navigator.geolocation.getCurrentPosition((position) => {
-      const userLocation = {
-        lat: position.coords.latitude,
-        lon: position.coords.longitude,
-        metricSystem: this.metricSystem
-      }      
-      this.subscriptions.add(
-        this.weather.searchByLocation(userLocation).subscribe((res:any)=>{
-          this.weatherData = res.payload;
-          console.log(this.weatherData);
-          this.loading = false;
-        })
-      )
-    });
-  }
-  
   changeMetricSystem(metricSystem: string){
     this.metricSystem = metricSystem;
-    this.searchByLocation();
+    localStorage.setItem('metricSystem', metricSystem);
+    if(this.searchForm.value.city){
+      this.searchByCity();
+    } else{
+      this.searchByLocation(this.userLocation?.lat, this.userLocation?.lon);
+    }    
   }
 
   getMetricSymbol(metric: string): string {
@@ -127,6 +181,18 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  setAsLocation(lat:number, lon:number){
+    const userLocation = {lat:lat, lon:lon};
+    this.userLocation = userLocation
+    const userLocationToString = JSON.stringify(userLocation);
+    localStorage.setItem('userLocation', userLocationToString);    
+  }
+
+  toggleAdvanced(){
+    this.showAdvanced = !this.showAdvanced;
+    const showAdvancedToString = JSON.stringify(this.showAdvanced);
+    localStorage.setItem('showAdvanced', showAdvancedToString);  
+  }
 
   getWindDirection(deg: number): string {
     switch (true) {
@@ -150,6 +216,6 @@ export class AppComponent implements OnInit, OnDestroy {
             return 'N';
     }
 }
-
+  
 
 }

@@ -26,52 +26,51 @@ class Post extends GlobalMethods
         $city = $data->city;
         $metricSystem = $data->metricSystem;
         $api_key = $this->openWeatherKey;
-        $weather = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api_key&$metricSystem";
-        $forecast = "api.openweathermap.org/data/2.5/forecast?q=$city&appid=$api_key&$metricSystem";
+        $api = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api_key&$metricSystem";
+
+
+        // Initialize cURL session
+        $ch = curl_init();
+
+        // Set the URL and other options
+        curl_setopt($ch, CURLOPT_URL, $api);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 
         // Start curl session.
-        $weatherResult = $this->curlSession($weather);
-        $forecastResult = $this->curlSession($forecast);
+        $result = curl_exec($ch);
+
+        // Check for curl errors
+        if ($result === false) {
+            curl_close($ch);
+            return $this->sendPayload(null, "failed", "Unable to fetch weather data.", 500);
+        }
+
+        // Get HTTP status code.
+        $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        // Close curl session.
+        curl_close($ch);
+
+
+        // If city is not found.
+        if ($http_status == 404) {
+            return $this->sendPayload(null, "failed", "Please enter a valid city.", 404);
+        } elseif ($http_status != 200) {
+            return $this->sendPayload(null, "failed", "An error occurred while fetching weather data.", $http_status);
+        }
 
         // Decode received json from api to insert to payload.
-        $weatherData = json_decode($weatherResult, true);
-        $forecastData = json_decode($forecastResult, true);
-        $results = [
-            'weather' => $weatherData,
-            'forecast' => $forecastData
-        ];
+        $resultArray = json_decode($result, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             return $this->sendPayload(null, "failed", "Invalid JSON response.", 500);
         }
 
         // Send results.
-        return $this->sendPayload($results, "success", "Request Success!", 200);
+        return $this->sendPayload($resultArray, "success", "Request Success!", 200);
     }
 
-    private function curlSession($url)
-    {
-        $ch = curl_init();
-
-        //Set the URL and other options
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-
-        $result = curl_exec($ch);
-
-        //Check for curl errors
-        if ($result === false) {
-            $error = curl_error($ch);
-            curl_close($ch);
-            return $this->sendPayload(null, "failed", "Unable to fetch weather data.", 500);
-        }
-
-        //Close curl session
-        curl_close($ch);
-
-        return $result;
-    }
 
 
     public function searchByLocation($data)
@@ -88,21 +87,21 @@ class Post extends GlobalMethods
         $lon = $data->lon;
         $metricSystem = $data->metricSystem;
         $api_key = $this->openWeatherKey;
-        $weather = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$api_key&$metricSystem";
+        $api = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$api_key&$metricSystem";
 
-        $weatherResult = file_get_contents($weather);
+        $result = file_get_contents($api);
 
-        if ($weatherResult === false) {
+        if ($result === false) {
             return $this->sendPayload(null, "failed", "Unable to fetch weather data.", 500);
         }
 
-        $weatherData = json_decode($weatherResult, true);
+        $resultArray = json_decode($result, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             return $this->sendPayload(null, "failed", "Invalid JSON response.", 500);
         }
 
-        return $this->sendPayload($weatherData, "success", "Request Success!", 200);
+        return $this->sendPayload($resultArray, "success", "Request Success!", 200);
     }
 
 }
