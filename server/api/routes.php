@@ -63,10 +63,17 @@ switch ($_SERVER['REQUEST_METHOD']) {
             case 'search-city':
                 echo json_encode($post->searchByCity($data));
                 break;
-
             case 'search-location':
                 echo json_encode($post->searchByLocation($data));
                 break;
+
+            case 'reverse-geocode-location':
+                echo json_encode($post->reverseGeocodeLocation($data));
+                break;
+            case 'geocode-city':
+                echo json_encode($post->reverseGeocodeCity($data));
+                break;
+
 
             default:
                 // Return a 403 response for unsupported requests

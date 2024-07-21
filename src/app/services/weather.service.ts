@@ -18,4 +18,12 @@ export class WeatherService {
     return this.http.post(`${this.API_URL}/search-location`, inputdata);
   }
 
+
+  geocodeByCity(inputdata: any) {
+    return this.http.post(`${this.API_URL}/geocode-city`, inputdata);
+  }
+
+  reverseGeocodeByLocation(inputdata: any) {
+    return this.http.post(`${this.API_URL}/reverse-geocode-location`, inputdata);
+  }
 }

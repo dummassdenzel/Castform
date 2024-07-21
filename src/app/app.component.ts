@@ -2,13 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { WeatherService } from './services/weather.service';
-import { Observable, Observer, Subscription } from 'rxjs';
+import { Observable, Observer, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { RealTimeClockComponent } from "./components/widgets/real-time-clock/real-time-clock.component";
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -24,11 +25,22 @@ export class AppComponent implements OnInit, OnDestroy {
   weatherData: any;
   forecastData: any;
   loading: boolean = false;
+  loadingSuggestions: boolean = false;
   metricSystem: any = '&units=metric'; // My default metric system.
   userLocation:any;
   showAdvanced:boolean = false;
+  suggestions:any
+  inputFocused: boolean = false;
+  clickingSuggestion = false;
+  showNotFoundMessage = false;
 
-  constructor(private builder: FormBuilder, private weather: WeatherService){  
+
+  constructor(private http: HttpClient,private builder: FormBuilder, private weather: WeatherService){  
+    this.searchForm = builder.group({
+      city: ['', Validators.required],
+      metricSystem: [this.metricSystem]
+    })
+
     const metricSystem:any = localStorage.getItem('metricSystem');
     if(metricSystem && metricSystem !== 'null'){
       this.metricSystem = metricSystem;
@@ -39,51 +51,110 @@ export class AppComponent implements OnInit, OnDestroy {
       this.showAdvanced = JSON.parse(showAdvancedString);
     }
 
-    const userLocationString:any = localStorage.getItem('userLocation');
-    if(userLocationString){
-      this.userLocation = JSON.parse(userLocationString);
-    }
-
-
-    this.searchForm = builder.group({
-      city: ['', Validators.required],
-      metricSystem: [this.metricSystem]
-    })
+    // const userLocationString:any = localStorage.getItem('userLocation');
+    // if(userLocationString){
+    //   this.userLocation = JSON.parse(userLocationString);
+    // }
     
   }
-
+  
   ngOnInit(): void {   
-    if(this.userLocation){
-      this.searchByLocation(this.userLocation.lat, this.userLocation.lon);
-    }
-    else{
-      this.searchByLocation();
-    }    
+    this.getUserLocation(); 
+
+    this.searchForm.get('city')?.valueChanges
+    .pipe(
+      // wait for a bit.
+      debounceTime(200),
+      // only trigger if value changes.
+      distinctUntilChanged()
+    )
+    .subscribe((value: any) => {
+      if (value && value.length > 2) {
+        this.loadingSuggestions = true;
+        this.showNotFoundMessage = false;
+        this.weather.geocodeByCity({ city: value }).subscribe(
+          (res: any) => {
+            console.log(res);
+            this.suggestions = res.payload;
+            this.loadingSuggestions = false;
+            this.showNotFoundMessage = this.suggestions.length === 0;
+          },
+          error => {
+            console.error('Error:', error);
+            this.loadingSuggestions = false;
+          }
+        );
+      } else {
+        this.suggestions = [];
+        this.showNotFoundMessage = false;
+      }
+    });
+
+    document.addEventListener('click', this.onDocumentClick.bind(this));
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+  onDocumentClick(event: MouseEvent) {
+    if (!this.inputFocused || this.clickingSuggestion) {
+      return;
+    }
+    const target = event.target as HTMLElement;
+    if (!target.closest('.suggestion-container')) {
+      this.inputFocused = false;
+    }
   }
-    
+
+  onInputFocus() {
+    this.inputFocused = true;
+  }
+
+  onInputBlur() {
+    if (!this.clickingSuggestion) {
+      this.inputFocused = false;
+    }
+  }
+
+  onSuggestionMouseDown() {
+    this.clickingSuggestion = true;
+  }
+
+  onSuggestionMouseUp() {
+    this.clickingSuggestion = false;
+  }
+
+  onSuggestionClick(location: any) {
+    this.inputFocused = false;
+    this.clickingSuggestion = false;
+    // Handle suggestion click
+    console.log(location);
+    this.searchByLocation(location.lat, location.lon)
+  }
+
+  getUserLocation() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          };        
+        console.log(userLocation);
+        this.searchByLocation(userLocation.lat, userLocation.lon)
+      }),
+      {
+        enableHighAccuracy: true,
+        // timeout: 30000,
+        timeout: 5000,
+        maximumAge: 0
+      }
+  }
 
   searchByLocation(lat: any = null, lon: any = null) {
     this.loading = true;
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
         let userLocation;
-        if (lat && lon) {
           userLocation = {
             lat: lat,
             lon: lon,
             metricSystem: this.metricSystem
-          };
-        } else {
-          userLocation = {
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-            metricSystem: this.metricSystem
-          };
-        }
+          };        
         this.subscriptions.add(
           this.weather.searchByLocation(userLocation).subscribe(
             (res: any) => {
@@ -96,20 +167,9 @@ export class AppComponent implements OnInit, OnDestroy {
               this.loading = false;
             }
           )
-        );
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
-        this.loading = false;
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 30000,
-        maximumAge: 0
-      }
-    );
+        );      
   }
-  
+
   searchByCity(){
     this.searchForm.patchValue({
       metricSystem: this.metricSystem
@@ -124,6 +184,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.weather.searchByCity(this.searchForm.value).subscribe((res:any)=>{
         this.weatherData = res.payload;
+        console.log("City:")
+        console.log(this.weatherData)
       }, error =>{
         switch (error.status){
           case 404:
@@ -164,7 +226,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if(this.searchForm.value.city){
       this.searchByCity();
     } else{
-      this.searchByLocation(this.userLocation?.lat, this.userLocation?.lon);
+      this.getUserLocation();
     }    
   }
 
@@ -217,5 +279,11 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 }
   
+
+
+ngOnDestroy(): void {
+  document.removeEventListener('click', this.onDocumentClick.bind(this));
+  this.subscriptions.unsubscribe();
+}
 
 }

@@ -71,8 +71,6 @@ class Post extends GlobalMethods
         return $this->sendPayload($resultArray, "success", "Request Success!", 200);
     }
 
-
-
     public function searchByLocation($data)
     {
         $validMetricSystems = ['&units=standard', '&units=metric', '&units=imperial'];
@@ -103,5 +101,61 @@ class Post extends GlobalMethods
 
         return $this->sendPayload($resultArray, "success", "Request Success!", 200);
     }
+
+    public function reverseGeocodeLocation($data)
+    {
+        if (!isset($data->lat) || !isset($data->lon)) {
+            return $this->sendPayload(null, "failed", "Please enter a Location.", 400);
+        }
+
+        $lat = $data->lat;
+        $lon = $data->lon;
+        $limit = 5;
+        $api_key = $this->openWeatherKey;
+
+        $api = "http://api.openweathermap.org/geo/1.0/reverse?lat=$lat&lon=$lon&limit=$limit&appid=$api_key";
+
+        $result = file_get_contents($api);
+
+        if ($result === false) {
+            return $this->sendPayload(null, "failed", "Unable to fetch weather data.", 500);
+        }
+
+        $resultArray = json_decode($result, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $this->sendPayload(null, "failed", "Invalid JSON response.", 500);
+        }
+
+        return $this->sendPayload($resultArray, "success", "Request Success!", 200);
+    }
+
+    public function reverseGeocodeCity($data)
+    {
+        if (!isset($data->city) || empty($data->city)) {
+            return $this->sendPayload(null, "failed", "Please enter a City.", 400);
+        }
+
+        $city = $data->city;
+        $limit = 5;
+        $api_key = $this->openWeatherKey;
+
+        $api = "http://api.openweathermap.org/geo/1.0/direct?q=$city&limit=$limit&appid=$api_key";
+
+        $result = file_get_contents($api);
+
+        if ($result === false) {
+            return $this->sendPayload(null, "failed", "Unable to fetch weather data.", 500);
+        }
+
+        $resultArray = json_decode($result, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $this->sendPayload(null, "failed", "Invalid JSON response.", 500);
+        }
+
+        return $this->sendPayload($resultArray, "success", "Request Success!", 200);
+    }
+
 
 }
