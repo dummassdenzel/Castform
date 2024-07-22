@@ -22,7 +22,7 @@ html, body {
     text-shadow: 1px 1px 1px black;
   }
   
-  .suggestions {
+  .noshadow {
     text-shadow: none;
   }
 

@@ -6,17 +6,17 @@
     <app-real-time-clock></app-real-time-clock>
   </div>
 
-  <div class="flex-col mt-8 mb-16 flex justify-center">
+  <div class="flex-col mt-6 mb-12 flex justify-center">
     <h1 class="font-primary font-bold text-5xl text-center">Castform</h1>
     <p class="text-center font-secondary text-sm">Navigate your day with accurate weather forecasts.</p>
   </div>
 
 
-  <div class="flex justify-center mb-8 ">
+  <div class="flex justify-center mb-7 ">
     <form [formGroup]="searchForm">
       <div class="relative w-[50vh] suggestion-container">
         <div class="flex justify-center">
-          <h1 class="absolute -top-7 text-center font-secondary text-base font-semibold">
+          <h1 class="absolute -top-6 text-center font-secondary text-sm font-semibold">
             Search for a Location:
           </h1>
         </div>
@@ -25,7 +25,7 @@
           placeholder="Search for a Location..." aria-label="search" (focus)="onInputFocus()" (blur)="onInputBlur()" />
 
         <ul *ngIf="inputFocused && (suggestions.length > 0 || showNotFoundMessage || loadingSuggestions)"
-          class="max-h-[50vh] overflow-auto absolute b-0 z-10 rounded-lg p-1.5 text-sm text-gray-500 suggestions shadow-lg w-full bg-slate-50 border-gray-300 border">
+          class="max-h-[50vh] overflow-auto absolute b-0 z-10 rounded-lg p-1.5 text-sm text-gray-500 noshadow shadow-lg w-full bg-slate-50 border-gray-300 border">
           <ng-container *ngIf="!loadingSuggestions; else loadingDisplay">
             <ng-container *ngIf="suggestions.length !== 0; else locationNotFound">
               <li *ngFor="let location of suggestions"
@@ -56,12 +56,12 @@
   </div>
 
   <div class="flex justify-center">
-    <div class="relative weather-container rounded-lg p-6 shadow-lg border-gray-100 border">
+    <div class="relative weather-container rounded-lg p-4 shadow-lg border-gray-100 border">
       <div *ngIf="!loading && weatherData; else loadingDisplay" class="px-5">
 
-        <!-- CSETTINGS -->
-        <div>
-          <button [matMenuTriggerFor]="settings" matTooltip="Settings" class="absolute top-2 right-3">
+        <!-- SETTINGS -->
+        <div class="absolute top-2 right-3">
+          <button [matMenuTriggerFor]="settings" matTooltip="Settings">
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
               width="24" height="24" fill="none" viewBox="0 0 24 24">
               <path stroke="currentColor" stroke-linecap="round" stroke-width="4" d="M6 12h.01m6 0h.01m5.99 0h.01" />
@@ -139,8 +139,11 @@
             </svg>
             {{weatherData.name}}
           </h1>
-          <div class="flex justify-center">
-            <p class="text-sm">{{weatherData.sys.country}}</p>
+          <div class="text-center mt-0.5">
+            <p class="text-xs">{{weatherData.sys.country}}
+            <p class="text-xs my-auto">Lat:
+              {{weatherData.coord.lat}} Lon:
+              {{weatherData.coord.lon}}</p>
           </div>
         </div>
 
@@ -273,6 +276,20 @@
             </div>
           </div>
 
+        </div>
+
+        <div class="flex justify-center mt-5 -mb-2 ">
+          <div class="flex ">
+            <button [ngClass]="{'bg-blue-900 text-white shadow-md': !showAdvanced}"
+              class=" z-10 text-xs px-2 py-0.5 rounded-s-[4px] text-gray-800 cursor-pointer hover:shadow-lg"
+              (click)="toggleAdvanced()">
+              Basic
+            </button>
+            <button class=" z-10 text-xs px-2 py-0.5 text-gray-800 cursor-pointer hover:shadow-lg"
+              [ngClass]="{'bg-blue-900 rounded-e-[4px] text-white shadow-md': showAdvanced}" (click)="toggleAdvanced()">
+              Advanced
+            </button>
+          </div>
         </div>
 
       </div>
